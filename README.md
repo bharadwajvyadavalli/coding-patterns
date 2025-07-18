@@ -19,6 +19,49 @@ leetcode-problems/
 └── README.md                   # This file
 ```
 
+## 📊 Common DSA Problems & Complexity Reference
+
+| Problem Category/Technique | Common Problems | Optimal Time Complexity | Optimal Space Complexity |
+|---|---|---|---|
+| **Arrays & Two Pointers** | Two Sum (sorted array) | O(n) | O(1) |
+| | Remove Duplicates from Sorted Array | O(n) | O(1) |
+| | Valid Palindrome | O(n) | O(1) |
+| **Sliding Window** | Max Sum Subarray of Fixed Size | O(n) | O(1) |
+| | Longest Substring Without Repeating Characters | O(n) | O(k) or O(1) (for fixed alphabet size) |
+| | Minimum Window Substring | O(N+M) where N is text length, M is pattern length | O(K) where K is alphabet size |
+| **Binary Search** | Standard Binary Search | O(log n) | O(1) |
+| | Find First/Last Occurrence | O(log n) | O(1) |
+| | Search in Rotated Sorted Array | O(log n) | O(1) |
+| **DFS & Backtracking** | Permutations | O(N!) | O(N) (for recursion stack) |
+| | Combinations | O(N! / (K! * (N-K)!)) | O(K) (for current combination) |
+| | N-Queens | O(N!) | O(N) (for board and recursion stack) |
+| | Word Search | O(Rows * Cols * 3^L) where L is word length | O(L) (for recursion stack) |
+| **BFS & Queue** | Level Order Tree Traversal | O(N) | O(W) (max width of tree) |
+| | Shortest Path in Unweighted Graph | O(V + E) | O(V) |
+| | Number of Islands | O(Rows * Cols) | O(Rows * Cols) (for queue/visited set) |
+| **Linked List Basics** | Reverse Linked List | O(n) | O(1) |
+| | Detect Cycle (Floyd's) | O(n) | O(1) |
+| | Merge Two Sorted Lists | O(m+n) | O(1) |
+| **Stack & Monotonic Stack** | Valid Parentheses | O(n) | O(n) |
+| | Next Greater Element | O(n) | O(n) |
+| | Largest Rectangle in Histogram | O(n) | O(n) |
+| **Dynamic Programming** | Fibonacci Sequence | O(n) (iterative) | O(1) (iterative) |
+| | Climbing Stairs | O(n) | O(1) |
+| | Longest Common Subsequence | O(m*n) | O(m*n) or O(min(m,n)) |
+| | Coin Change | O(amount * number_of_coins) | O(amount) |
+| **Graph & Union-Find** | Union-Find Operations | O(α(n)) (amortized inverse Ackermann function) | O(n) |
+| | Number of Connected Components | O(V + E) | O(V) |
+| | Kruskal's Algorithm (MST) | O(E log E) or O(E log V) | O(V + E) |
+| **Heap & Priority Queue** | Kth Largest Element | O(N log K) | O(K) |
+| | Top K Frequent Elements | O(N log K) | O(K) |
+| | Merge K Sorted Lists | O(N log K) where N is total elements, K is number of lists | O(K) |
+
+**Notes:**
+- `n` = array/string length, `N` = total elements, `K` = parameter value
+- `V` = vertices, `E` = edges, `W` = tree width, `L` = word length
+- `α(n)` = inverse Ackermann function (very slow growing)
+- This table provides general complexity guidelines for common interview problems
+
 ## 🚀 Quick Start
 
 Each file can be run independently to see examples in action:
