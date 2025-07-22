@@ -1,124 +1,198 @@
 """
-Sliding Window Technique
-
-Sliding window is a technique where we maintain a subset of elements (window)
-and slide it through the array/string to solve problems efficiently.
-Common patterns:
-- Fixed size window (find max/min in each window)
-- Variable size window (find smallest/largest subarray with condition)
-- Two pointers expanding/contracting window
-
-Time Complexity: Usually O(n) - each element visited at most twice
-Space Complexity: Usually O(1) or O(k) where k is window size
+Sliding Window - NeetCode 75
+Essential patterns for technical interviews.
 """
 
+def longest_substring_no_repeat(s):
+    """LC 3 - Sliding window with set"""
+    seen = set()
+    left = max_len = 0
+    
+    for right, char in enumerate(s):
+        while char in seen:
+            seen.remove(s[left])
+            left += 1
+        seen.add(char)
+        max_len = max(max_len, right - left + 1)
+    
+    return max_len
+
+def character_replacement(s, k):
+    """LC 424 - Sliding window with char count"""
+    count = {}
+    left = max_freq = max_len = 0
+    
+    for right, char in enumerate(s):
+        count[char] = count.get(char, 0) + 1
+        max_freq = max(max_freq, count[char])
+        
+        if right - left + 1 - max_freq > k:
+            count[s[left]] -= 1
+            left += 1
+        
+        max_len = max(max_len, right - left + 1)
+    
+    return max_len
+
+def check_inclusion(s1, s2):
+    """LC 567 - Sliding window with char count"""
+    if len(s1) > len(s2):
+        return False
+    
+    count1 = [0] * 26
+    count2 = [0] * 26
+    
+    for char in s1:
+        count1[ord(char) - ord('a')] += 1
+    
+    for i in range(len(s2)):
+        count2[ord(s2[i]) - ord('a')] += 1
+        
+        if i >= len(s1):
+            count2[ord(s2[i - len(s1)]) - ord('a')] -= 1
+        
+        if count1 == count2:
+            return True
+    
+    return False
+
+def min_window(s, t):
+    """LC 76 - Sliding window with char count"""
+    if not t or not s:
+        return ""
+    
+    count_t = {}
+    for char in t:
+        count_t[char] = count_t.get(char, 0) + 1
+    
+    required = len(count_t)
+    formed = 0
+    window_count = {}
+    
+    left = 0
+    min_len = float('inf')
+    result = ""
+    
+    for right, char in enumerate(s):
+        window_count[char] = window_count.get(char, 0) + 1
+        
+        if char in count_t and window_count[char] == count_t[char]:
+            formed += 1
+        
+        while left <= right and formed == required:
+            if right - left + 1 < min_len:
+                min_len = right - left + 1
+                result = s[left:right + 1]
+            
+            window_count[s[left]] -= 1
+            if s[left] in count_t and window_count[s[left]] < count_t[s[left]]:
+                formed -= 1
+            left += 1
+    
+    return result
+
+def max_sliding_window(nums, k):
+    """LC 239 - Monotonic deque"""
+    from collections import deque
+    
+    dq = deque()
+    result = []
+    
+    for i, num in enumerate(nums):
+        while dq and nums[dq[-1]] < num:
+            dq.pop()
+        
+        dq.append(i)
+        
+        if dq[0] == i - k:
+            dq.popleft()
+        
+        if i >= k - 1:
+            result.append(nums[dq[0]])
+    
+    return result
+
+def find_anagrams(s, p):
+    """LC 438 - Sliding window with char count"""
+    if len(p) > len(s):
+        return []
+    
+    count_p = [0] * 26
+    count_s = [0] * 26
+    
+    for char in p:
+        count_p[ord(char) - ord('a')] += 1
+    
+    result = []
+    for i in range(len(s)):
+        count_s[ord(s[i]) - ord('a')] += 1
+        
+        if i >= len(p):
+            count_s[ord(s[i - len(p)]) - ord('a')] -= 1
+        
+        if count_s == count_p:
+            result.append(i - len(p) + 1)
+    
+    return result
+
+# ============================================================================
+# ADDITIONAL PATTERNS
+# ============================================================================
+
 def max_sum_subarray_fixed(nums, k):
-    """
-    Maximum Sum Subarray of Size K (Fixed Window)
-    Find maximum sum of subarray with exactly k elements.
-    """
+    """Fixed size sliding window"""
     if len(nums) < k:
         return 0
     
-    # Calculate sum of first window
-    window_sum = sum(nums[:k])
-    max_sum = window_sum
+    curr_sum = sum(nums[:k])
+    max_sum = curr_sum
     
-    # Slide window and update max
     for i in range(k, len(nums)):
-        window_sum = window_sum - nums[i - k] + nums[i]
-        max_sum = max(max_sum, window_sum)
+        curr_sum = curr_sum - nums[i - k] + nums[i]
+        max_sum = max(max_sum, curr_sum)
     
     return max_sum
 
 def min_subarray_sum(nums, target):
-    """
-    Minimum Size Subarray Sum (LeetCode 209)
-    Find smallest subarray with sum >= target.
-    """
-    left = 0
-    current_sum = 0
-    min_length = float('inf')
+    """Variable size sliding window"""
+    left = curr_sum = 0
+    min_len = float('inf')
     
-    for right in range(len(nums)):
-        current_sum += nums[right]
+    for right, num in enumerate(nums):
+        curr_sum += num
         
-        # Shrink window while sum >= target
-        while current_sum >= target:
-            min_length = min(min_length, right - left + 1)
-            current_sum -= nums[left]
+        while curr_sum >= target:
+            min_len = min(min_len, right - left + 1)
+            curr_sum -= nums[left]
             left += 1
     
-    return min_length if min_length != float('inf') else 0
-
-def longest_substring_no_repeat(s):
-    """
-    Longest Substring Without Repeating Characters (LeetCode 3)
-    Find length of longest substring without repeating characters.
-    """
-    char_set = set()
-    left = 0
-    max_length = 0
-    
-    for right in range(len(s)):
-        # If character already in window, shrink from left
-        while s[right] in char_set:
-            char_set.remove(s[left])
-            left += 1
-        
-        char_set.add(s[right])
-        max_length = max(max_length, right - left + 1)
-    
-    return max_length
+    return min_len if min_len != float('inf') else 0
 
 def max_consecutive_ones_iii(nums, k):
-    """
-    Max Consecutive Ones III (LeetCode 1004)
-    Find longest sequence of 1s after flipping at most k 0s.
-    """
-    left = 0
-    zeros_count = 0
-    max_length = 0
+    """Flip k zeros to get max consecutive ones"""
+    left = zeros = max_len = 0
     
-    for right in range(len(nums)):
-        if nums[right] == 0:
-            zeros_count += 1
+    for right, num in enumerate(nums):
+        if num == 0:
+            zeros += 1
         
-        # Shrink window if too many zeros
-        while zeros_count > k:
+        while zeros > k:
             if nums[left] == 0:
-                zeros_count -= 1
+                zeros -= 1
             left += 1
         
-        max_length = max(max_length, right - left + 1)
+        max_len = max(max_len, right - left + 1)
     
-    return max_length
+    return max_len
+
+# ============================================================================
+# TESTING
+# ============================================================================
 
 if __name__ == "__main__":
-    # Test Fixed Size Window
-    print("=== Fixed Size Window ===")
-    nums1 = [1, 4, 2, 10, 2, 3, 1, 0, 20]
-    k1 = 4
-    print(f"Array: {nums1}, Window size: {k1}")
-    print(f"Max sum: {max_sum_subarray_fixed(nums1, k1)}")  # 24
-    
-    # Test Variable Size Window - Min Subarray Sum
-    print("\n=== Variable Size Window - Min Subarray Sum ===")
-    nums2 = [2, 3, 1, 2, 4, 3]
-    target2 = 7
-    print(f"Array: {nums2}, Target: {target2}")
-    print(f"Min length: {min_subarray_sum(nums2, target2)}")  # 2
-    
-    # Test Longest Substring No Repeat
-    print("\n=== Longest Substring No Repeat ===")
-    test_strings = ["abcabcbb", "bbbbb", "pwwkew"]
-    for s in test_strings:
-        result = longest_substring_no_repeat(s)
-        print(f"'{s}' -> {result}")
-    
-    # Test Max Consecutive Ones III
-    print("\n=== Max Consecutive Ones III ===")
-    nums3 = [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0]
-    k3 = 2
-    print(f"Array: {nums3}, K: {k3}")
-    print(f"Max consecutive ones: {max_consecutive_ones_iii(nums3, k3)}")  # 6 
+    # Quick tests for key problems
+    print("Longest Substring:", longest_substring_no_repeat("abcabcbb"))
+    print("Character Replacement:", character_replacement("AABABBA", 1))
+    print("Check Inclusion:", check_inclusion("ab", "eidbaooo"))
+    print("Min Window:", min_window("ADOBECODEBANC", "ABC"))
+    print("Max Sliding Window:", max_sliding_window([1,3,-1,-3,5,3,6,7], 3)) 

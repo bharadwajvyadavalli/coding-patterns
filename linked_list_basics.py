@@ -1,17 +1,6 @@
 """
-Linked List Basics
-
-Linked list is a linear data structure where elements are stored in nodes,
-and each node points to the next node. Common operations:
-- Traversal
-- Insertion (beginning, end, middle)
-- Deletion
-- Reversal
-- Cycle detection
-- Finding middle element
-
-Time Complexity: O(n) for traversal, O(1) for head operations
-Space Complexity: O(1) for most operations
+Linked List - NeetCode 75
+Essential patterns for technical interviews.
 """
 
 class ListNode:
@@ -19,163 +8,226 @@ class ListNode:
         self.val = val
         self.next = next
 
-def reverse_linked_list(head):
-    """
-    Reverse Linked List (LeetCode 206)
-    Reverse a singly linked list iteratively.
-    """
-    prev = None
-    current = head
-    
-    while current:
-        next_temp = current.next
-        current.next = prev
-        prev = current
-        current = next_temp
-    
-    return prev
+class Node:
+    def __init__(self, val=0, next=None, random=None):
+        self.val = val
+        self.next = next
+        self.random = random
 
-def detect_cycle(head):
-    """
-    Linked List Cycle (LeetCode 141)
-    Detect if linked list has a cycle using Floyd's algorithm.
-    """
+def has_cycle(head):
+    """LC 141 - Floyd's cycle detection"""
     if not head or not head.next:
         return False
     
-    slow = head
-    fast = head
-    
+    slow = fast = head
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
-        
         if slow == fast:
             return True
     
     return False
 
-def find_middle_node(head):
-    """
-    Middle of the Linked List (LeetCode 876)
-    Find middle node using slow/fast pointer technique.
-    """
+def reorder_list(head):
+    """LC 143 - Find middle, reverse second half, merge"""
     if not head or not head.next:
-        return head
+        return
     
-    slow = head
-    fast = head
-    
-    while fast and fast.next:
+    # Find middle
+    slow = fast = head
+    while fast.next and fast.next.next:
         slow = slow.next
         fast = fast.next.next
     
+    # Reverse second half
+    prev, curr = None, slow.next
+    slow.next = None
+    while curr:
+        next_temp = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next_temp
+    
+    # Merge
+    first, second = head, prev
+    while second:
+        temp1, temp2 = first.next, second.next
+        first.next = second
+        second.next = temp1
+        first, second = temp1, temp2
+
+def copy_random_list(head):
+    """LC 138 - Hash map for random pointers"""
+    if not head:
+        return None
+    
+    # Create copy nodes
+    old_to_new = {}
+    curr = head
+    while curr:
+        old_to_new[curr] = Node(curr.val)
+        curr = curr.next
+    
+    # Set next and random pointers
+    curr = head
+    while curr:
+        old_to_new[curr].next = old_to_new.get(curr.next)
+        old_to_new[curr].random = old_to_new.get(curr.random)
+        curr = curr.next
+    
+    return old_to_new[head]
+
+def find_duplicate(nums):
+    """LC 287 - Floyd's cycle detection on array"""
+    slow = fast = 0
+    
+    # Find meeting point
+    while True:
+        slow = nums[slow]
+        fast = nums[nums[fast]]
+        if slow == fast:
+            break
+    
+    # Find start of cycle
+    slow = 0
+    while slow != fast:
+        slow = nums[slow]
+        fast = nums[fast]
+    
     return slow
 
-def merge_two_sorted_lists(l1, l2):
-    """
-    Merge Two Sorted Lists (LeetCode 21)
-    Merge two sorted linked lists into one sorted list.
-    """
-    dummy = ListNode(0)
-    current = dummy
+class LRUCache:
+    """LC 146 - Hash map + doubly linked list"""
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.cache = {}
+        self.head = ListNode(0, 0)  # dummy head
+        self.tail = ListNode(0, 0)  # dummy tail
+        self.head.next = self.tail
+        self.tail.prev = self.head
     
-    while l1 and l2:
-        if l1.val <= l2.val:
-            current.next = l1
-            l1 = l1.next
-        else:
-            current.next = l2
-            l2 = l2.next
-        current = current.next
+    def get(self, key):
+        if key in self.cache:
+            node = self.cache[key]
+            self._remove(node)
+            self._add(node)
+            return node.val
+        return -1
     
-    # Attach remaining nodes
-    current.next = l1 if l1 else l2
+    def put(self, key, value):
+        if key in self.cache:
+            self._remove(self.cache[key])
+        
+        node = ListNode(key, value)
+        self.cache[key] = node
+        self._add(node)
+        
+        if len(self.cache) > self.capacity:
+            lru = self.head.next
+            self._remove(lru)
+            del self.cache[lru.key]
+    
+    def _add(self, node):
+        node.prev = self.tail.prev
+        node.next = self.tail
+        self.tail.prev.next = node
+        self.tail.prev = node
+    
+    def _remove(self, node):
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+def merge_k_lists(lists):
+    """LC 23 - Priority queue"""
+    import heapq
+    
+    heap = []
+    for i, head in enumerate(lists):
+        if head:
+            heapq.heappush(heap, (head.val, i, head))
+    
+    dummy = curr = ListNode()
+    while heap:
+        val, i, node = heapq.heappop(heap)
+        curr.next = node
+        curr = curr.next
+        
+        if node.next:
+            heapq.heappush(heap, (node.next.val, i, node.next))
     
     return dummy.next
 
-def remove_nth_from_end(head, n):
-    """
-    Remove Nth Node From End of List (LeetCode 19)
-    Remove the nth node from the end of the list.
-    """
-    dummy = ListNode(0)
-    dummy.next = head
+def reverse_k_group(head, k):
+    """LC 25 - Reverse in groups"""
+    def get_length(node):
+        length = 0
+        while node:
+            length += 1
+            node = node.next
+        return length
     
-    first = dummy
-    second = dummy
+    def reverse_group(start, end):
+        prev, curr = None, start
+        while curr != end:
+            next_temp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = next_temp
+        return prev
     
-    # Move first pointer n+1 steps ahead
-    for _ in range(n + 1):
-        first = first.next
+    length = get_length(head)
+    dummy = ListNode(0, head)
+    group_prev = dummy
     
-    # Move both pointers until first reaches end
-    while first:
-        first = first.next
-        second = second.next
-    
-    # Remove the nth node
-    second.next = second.next.next
+    while length >= k:
+        group_start = group_prev.next
+        group_end = group_start
+        
+        for _ in range(k):
+            group_end = group_end.next
+        
+        reversed_start = reverse_group(group_start, group_end)
+        group_prev.next = reversed_start
+        group_start.next = group_end
+        group_prev = group_start
+        length -= k
     
     return dummy.next
 
-def add_two_numbers(l1, l2):
-    """
-    Add Two Numbers (LeetCode 2)
-    Add two numbers represented by linked lists.
-    """
-    dummy = ListNode(0)
-    current = dummy
-    carry = 0
-    
-    while l1 or l2 or carry:
-        # Get values from lists
-        val1 = l1.val if l1 else 0
-        val2 = l2.val if l2 else 0
-        
-        # Calculate sum and carry
-        total = val1 + val2 + carry
-        carry = total // 10
-        digit = total % 10
-        
-        # Create new node
-        current.next = ListNode(digit)
-        current = current.next
-        
-        # Move to next nodes
-        if l1:
-            l1 = l1.next
-        if l2:
-            l2 = l2.next
-    
-    return dummy.next
+# ============================================================================
+# ADDITIONAL HELPER FUNCTIONS
+# ============================================================================
+
+def find_middle_node(head):
+    """Find middle node of linked list"""
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow
 
 def is_palindrome_linked_list(head):
-    """
-    Palindrome Linked List (LeetCode 234)
-    Check if linked list is palindrome using O(1) space.
-    """
+    """LC 234 - Find middle, reverse second half, compare"""
     if not head or not head.next:
         return True
     
     # Find middle
     slow = fast = head
-    while fast and fast.next:
+    while fast.next and fast.next.next:
         slow = slow.next
         fast = fast.next.next
     
     # Reverse second half
-    prev = None
-    current = slow
-    while current:
-        next_temp = current.next
-        current.next = prev
-        prev = current
-        current = next_temp
+    prev, curr = None, slow.next
+    slow.next = None
+    while curr:
+        next_temp = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next_temp
     
-    # Compare first and second half
-    first = head
-    second = prev
+    # Compare
+    first, second = head, prev
     while second:
         if first.val != second.val:
             return False
@@ -184,64 +236,62 @@ def is_palindrome_linked_list(head):
     
     return True
 
-def print_linked_list(head):
-    """Helper function to print linked list"""
-    current = head
-    values = []
-    while current:
-        values.append(str(current.val))
-        current = current.next
-    return " -> ".join(values) + " -> None"
+def remove_nth_from_end(head, n):
+    """LC 19 - Two pointers"""
+    dummy = ListNode(0, head)
+    first = second = dummy
+    
+    for _ in range(n + 1):
+        first = first.next
+    
+    while first:
+        first = first.next
+        second = second.next
+    
+    second.next = second.next.next
+    return dummy.next
+
+def add_two_numbers(l1, l2):
+    """LC 2 - Add with carry"""
+    dummy = curr = ListNode()
+    carry = 0
+    
+    while l1 or l2 or carry:
+        val1 = l1.val if l1 else 0
+        val2 = l2.val if l2 else 0
+        
+        total = val1 + val2 + carry
+        carry = total // 10
+        
+        curr.next = ListNode(total % 10)
+        curr = curr.next
+        
+        l1 = l1.next if l1 else None
+        l2 = l2.next if l2 else None
+    
+    return dummy.next
+
+# ============================================================================
+# TESTING
+# ============================================================================
 
 if __name__ == "__main__":
-    # Create test linked lists
-    def create_list(values):
-        if not values:
-            return None
-        head = ListNode(values[0])
-        current = head
-        for val in values[1:]:
-            current.next = ListNode(val)
-            current = current.next
-        return head
+    # Quick tests for key problems
+    print("Has Cycle:", has_cycle(None))  # False
     
-    # Test Reverse Linked List
-    print("=== Reverse Linked List ===")
-    list1 = create_list([1, 2, 3, 4, 5])
-    print(f"Original: {print_linked_list(list1)}")
-    reversed_list = reverse_linked_list(list1)
-    print(f"Reversed: {print_linked_list(reversed_list)}")
+    # Create test list: 1->2->3->4->5
+    head = ListNode(1)
+    head.next = ListNode(2)
+    head.next.next = ListNode(3)
+    head.next.next.next = ListNode(4)
+    head.next.next.next.next = ListNode(5)
     
-    # Test Find Middle Node
-    print("\n=== Find Middle Node ===")
-    list2 = create_list([1, 2, 3, 4, 5])
-    middle = find_middle_node(list2)
-    print(f"List: {print_linked_list(list2)}")
-    print(f"Middle node value: {middle.val}")
+    print("Find Duplicate:", find_duplicate([1,3,4,2,2]))
     
-    # Test Merge Two Sorted Lists
-    print("\n=== Merge Two Sorted Lists ===")
-    list3 = create_list([1, 3, 5])
-    list4 = create_list([2, 4, 6])
-    merged = merge_two_sorted_lists(list3, list4)
-    print(f"List 1: {print_linked_list(create_list([1, 3, 5]))}")
-    print(f"List 2: {print_linked_list(create_list([2, 4, 6]))}")
-    print(f"Merged: {print_linked_list(merged)}")
+    # LRU Cache test
+    lru = LRUCache(2)
+    lru.put(1, 1)
+    lru.put(2, 2)
+    print("LRU Get 1:", lru.get(1))
     
-    # Test Add Two Numbers
-    print("\n=== Add Two Numbers ===")
-    num1 = create_list([2, 4, 3])
-    num2 = create_list([5, 6, 4])
-    sum_list = add_two_numbers(num1, num2)
-    print(f"Number 1: {print_linked_list(create_list([2, 4, 3]))}")
-    print(f"Number 2: {print_linked_list(create_list([5, 6, 4]))}")
-    print(f"Sum: {print_linked_list(sum_list)}")
-    
-    # Test Palindrome
-    print("\n=== Palindrome Linked List ===")
-    palindrome_list = create_list([1, 2, 2, 1])
-    non_palindrome_list = create_list([1, 2, 3, 4])
-    print(f"List: {print_linked_list(palindrome_list)}")
-    print(f"Is palindrome: {is_palindrome_linked_list(palindrome_list)}")
-    print(f"List: {print_linked_list(non_palindrome_list)}")
-    print(f"Is palindrome: {is_palindrome_linked_list(non_palindrome_list)}") 
+    print("Reverse K Group:", reverse_k_group(head, 2)) 
