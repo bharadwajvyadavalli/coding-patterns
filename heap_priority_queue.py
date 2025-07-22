@@ -1,17 +1,6 @@
 """
-Heap & Priority Queue
-
-Heap is a specialized tree-based data structure that satisfies the heap property.
-Priority Queue is an abstract data type that operates similar to a regular queue
-but each element has a priority. Common applications:
-- Top K elements
-- Merge K sorted lists
-- Find median from data stream
-- Dijkstra's algorithm
-- Huffman coding
-
-Time Complexity: O(log n) for insert/delete, O(1) for peek
-Space Complexity: O(n) for storing elements
+Heap & Priority Queue - LeetCode 75
+Essential patterns for technical interviews.
 """
 
 import heapq
@@ -23,10 +12,7 @@ class ListNode:
         self.next = next
 
 def find_kth_largest(nums, k):
-    """
-    Kth Largest Element in an Array (LeetCode 215)
-    Find kth largest element using min heap.
-    """
+    """LC 215 - Find kth largest element using min heap"""
     heap = []
     
     for num in nums:
@@ -37,10 +23,7 @@ def find_kth_largest(nums, k):
     return heap[0]
 
 def top_k_frequent_elements(nums, k):
-    """
-    Top K Frequent Elements (LeetCode 347)
-    Find k most frequent elements.
-    """
+    """LC 347 - Find k most frequent elements"""
     # Count frequencies
     counter = Counter(nums)
     
@@ -59,10 +42,7 @@ def top_k_frequent_elements(nums, k):
     return result[::-1]
 
 def merge_k_sorted_lists(lists):
-    """
-    Merge k Sorted Lists (LeetCode 23)
-    Merge k sorted linked lists into one sorted list.
-    """
+    """LC 23 - Merge k sorted linked lists"""
     if not lists:
         return None
     
@@ -70,7 +50,7 @@ def merge_k_sorted_lists(lists):
     heap = []
     for i, lst in enumerate(lists):
         if lst:
-            heapq.heappush(heap, (lst[0], i, 0))
+            heapq.heappush(heap, (lst.val, i, 0))
     
     dummy = ListNode(0)
     current = dummy
@@ -88,43 +68,41 @@ def merge_k_sorted_lists(lists):
     
     return dummy.next
 
-class MedianFinder:
-    """
-    Find Median from Data Stream (LeetCode 295)
-    Design data structure to find median of stream of numbers.
-    """
-    def __init__(self):
-        self.max_heap = []  # Left half (max heap)
-        self.min_heap = []  # Right half (min heap)
-    
-    def addNum(self, num):
-        # Add to max heap first
-        heapq.heappush(self.max_heap, -num)
+def find_median_from_data_stream():
+    """LC 295 - Design data structure to find median of stream"""
+    class MedianFinder:
+        def __init__(self):
+            self.max_heap = []  # Left half (max heap)
+            self.min_heap = []  # Right half (min heap)
         
-        # Balance heaps
-        if (self.max_heap and self.min_heap and 
-            -self.max_heap[0] > self.min_heap[0]):
-            val = -heapq.heappop(self.max_heap)
-            heapq.heappush(self.min_heap, val)
+        def addNum(self, num):
+            # Add to max heap first
+            heapq.heappush(self.max_heap, -num)
+            
+            # Balance heaps
+            if (self.max_heap and self.min_heap and 
+                -self.max_heap[0] > self.min_heap[0]):
+                val = -heapq.heappop(self.max_heap)
+                heapq.heappush(self.min_heap, val)
+            
+            # Ensure max heap has at most one more element
+            if len(self.max_heap) > len(self.min_heap) + 1:
+                val = -heapq.heappop(self.max_heap)
+                heapq.heappush(self.min_heap, val)
+            elif len(self.min_heap) > len(self.max_heap):
+                val = heapq.heappop(self.min_heap)
+                heapq.heappush(self.max_heap, -val)
         
-        # Ensure size balance
-        if len(self.max_heap) > len(self.min_heap) + 1:
-            val = -heapq.heappop(self.max_heap)
-            heapq.heappush(self.min_heap, val)
-        elif len(self.min_heap) > len(self.max_heap):
-            val = heapq.heappop(self.min_heap)
-            heapq.heappush(self.max_heap, -val)
+        def findMedian(self):
+            if len(self.max_heap) > len(self.min_heap):
+                return -self.max_heap[0]
+            return (-self.max_heap[0] + self.min_heap[0]) / 2
     
-    def findMedian(self):
-        if len(self.max_heap) > len(self.min_heap):
-            return -self.max_heap[0]
-        return (-self.max_heap[0] + self.min_heap[0]) / 2
+    return MedianFinder()
 
 def k_closest_points_to_origin(points, k):
-    """
-    K Closest Points to Origin (LeetCode 973)
-    Find k closest points to origin using max heap.
-    """
+    """LC 973 - Find k closest points to origin"""
+    # Use max heap to keep k closest points
     heap = []
     
     for point in points:
@@ -137,10 +115,7 @@ def k_closest_points_to_origin(points, k):
     return [point for _, point in heap]
 
 def last_stone_weight(stones):
-    """
-    Last Stone Weight (LeetCode 1046)
-    Smash heaviest stones and return weight of last remaining stone.
-    """
+    """LC 1046 - Last remaining stone weight"""
     # Convert to max heap (negate values)
     heap = [-stone for stone in stones]
     heapq.heapify(heap)
@@ -155,10 +130,7 @@ def last_stone_weight(stones):
     return -heap[0] if heap else 0
 
 def reorganize_string(s):
-    """
-    Reorganize String (LeetCode 767)
-    Reorganize string so no adjacent characters are same.
-    """
+    """LC 767 - Reorganize string so no adjacent characters are same"""
     # Count character frequencies
     counter = Counter(s)
     
@@ -172,15 +144,13 @@ def reorganize_string(s):
     while heap:
         freq, char = heapq.heappop(heap)
         
-        # If same as previous, try next character
-        if char == prev_char:
+        if prev_char == char:
             if not heap:
-                return ""
+                return ""  # Cannot reorganize
             freq2, char2 = heapq.heappop(heap)
             result.append(char2)
             prev_char = char2
             
-            # Put back first character if still has frequency
             if freq2 + 1 < 0:
                 heapq.heappush(heap, (freq2 + 1, char2))
             heapq.heappush(heap, (freq, char))
@@ -188,17 +158,38 @@ def reorganize_string(s):
             result.append(char)
             prev_char = char
             
-            # Put back if still has frequency
             if freq + 1 < 0:
                 heapq.heappush(heap, (freq + 1, char))
     
     return ''.join(result)
 
+def task_scheduler(tasks, n):
+    """LC 621 - Minimum intervals to complete all tasks"""
+    # Count task frequencies
+    counter = Counter(tasks)
+    
+    # Use max heap to get most frequent tasks first
+    heap = [-freq for freq in counter.values()]
+    heapq.heapify(heap)
+    
+    time = 0
+    queue = []  # (freq, available_time)
+    
+    while heap or queue:
+        time += 1
+        
+        if heap:
+            freq = heapq.heappop(heap)
+            if freq + 1 < 0:
+                queue.append((freq + 1, time + n))
+        
+        if queue and queue[0][1] <= time:
+            heapq.heappush(heap, queue.pop(0)[0])
+    
+    return time
+
 def minimum_cost_to_connect_sticks(sticks):
-    """
-    Minimum Cost to Connect Sticks (LeetCode 1167)
-    Connect sticks with minimum cost (cost = sum of lengths).
-    """
+    """LC 1167 - Minimum cost to connect all sticks"""
     if len(sticks) <= 1:
         return 0
     
@@ -217,91 +208,160 @@ def minimum_cost_to_connect_sticks(sticks):
     return total_cost
 
 def kth_smallest_element_in_sorted_matrix(matrix, k):
-    """
-    Kth Smallest Element in a Sorted Matrix (LeetCode 378)
-    Find kth smallest element in matrix where rows and columns are sorted.
-    """
+    """LC 378 - Find kth smallest element in sorted matrix"""
     rows, cols = len(matrix), len(matrix[0])
+    
+    # Use min heap with (value, row, col)
     heap = [(matrix[0][0], 0, 0)]
     visited = set()
     
-    for _ in range(k - 1):
+    for _ in range(k):
         val, row, col = heapq.heappop(heap)
         
-        # Add right neighbor
-        if col + 1 < cols and (row, col + 1) not in visited:
-            heapq.heappush(heap, (matrix[row][col + 1], row, col + 1))
-            visited.add((row, col + 1))
-        
-        # Add bottom neighbor
         if row + 1 < rows and (row + 1, col) not in visited:
             heapq.heappush(heap, (matrix[row + 1][col], row + 1, col))
             visited.add((row + 1, col))
+        
+        if col + 1 < cols and (row, col + 1) not in visited:
+            heapq.heappush(heap, (matrix[row][col + 1], row, col + 1))
+            visited.add((row, col + 1))
     
-    return heapq.heappop(heap)[0]
+    return val
 
+def find_k_pairs_with_smallest_sums(nums1, nums2, k):
+    """LC 373 - Find k pairs with smallest sums"""
+    if not nums1 or not nums2:
+        return []
+    
+    # Use min heap with (sum, i, j)
+    heap = [(nums1[0] + nums2[0], 0, 0)]
+    visited = set()
+    result = []
+    
+    while heap and len(result) < k:
+        total, i, j = heapq.heappop(heap)
+        result.append([nums1[i], nums2[j]])
+        
+        if i + 1 < len(nums1) and (i + 1, j) not in visited:
+            heapq.heappush(heap, (nums1[i + 1] + nums2[j], i + 1, j))
+            visited.add((i + 1, j))
+        
+        if j + 1 < len(nums2) and (i, j + 1) not in visited:
+            heapq.heappush(heap, (nums1[i] + nums2[j + 1], i, j + 1))
+            visited.add((i, j + 1))
+    
+    return result
+
+def sliding_window_median(nums, k):
+    """LC 480 - Find median for each sliding window"""
+    def add_num(num):
+        heapq.heappush(max_heap, -num)
+        heapq.heappush(min_heap, -heapq.heappop(max_heap))
+        
+        if len(max_heap) < len(min_heap):
+            heapq.heappush(max_heap, -heapq.heappop(min_heap))
+    
+    def remove_num(num):
+        if num <= -max_heap[0]:
+            max_heap.remove(-num)
+            heapq.heapify(max_heap)
+        else:
+            min_heap.remove(num)
+            heapq.heapify(min_heap)
+        
+        # Rebalance
+        if len(max_heap) < len(min_heap):
+            heapq.heappush(max_heap, -heapq.heappop(min_heap))
+        elif len(max_heap) > len(min_heap) + 1:
+            heapq.heappush(min_heap, -heapq.heappop(max_heap))
+    
+    def get_median():
+        if len(max_heap) > len(min_heap):
+            return -max_heap[0]
+        return (-max_heap[0] + min_heap[0]) / 2
+    
+    max_heap = []
+    min_heap = []
+    result = []
+    
+    for i in range(len(nums)):
+        add_num(nums[i])
+        
+        if i >= k - 1:
+            result.append(get_median())
+            remove_num(nums[i - k + 1])
+    
+    return result
+
+def network_delay_time(times, n, k):
+    """LC 743 - Dijkstra's algorithm with heap"""
+    from collections import defaultdict
+    
+    # Build adjacency list
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    
+    # Dijkstra's algorithm
+    distances = {i: float('inf') for i in range(1, n + 1)}
+    distances[k] = 0
+    
+    heap = [(0, k)]
+    visited = set()
+    
+    while heap:
+        dist, node = heapq.heappop(heap)
+        
+        if node in visited:
+            continue
+        visited.add(node)
+        
+        for neighbor, weight in graph[node]:
+            if dist + weight < distances[neighbor]:
+                distances[neighbor] = dist + weight
+                heapq.heappush(heap, (distances[neighbor], neighbor))
+    
+    max_distance = max(distances.values())
+    return max_distance if max_distance != float('inf') else -1
+
+def cheapest_flights_within_k_stops(n, flights, src, dst, k):
+    """LC 787 - Modified Dijkstra with stops constraint"""
+    from collections import defaultdict
+    
+    # Build adjacency list
+    graph = defaultdict(list)
+    for u, v, price in flights:
+        graph[u].append((v, price))
+    
+    # (cost, stops, city)
+    heap = [(0, 0, src)]
+    visited = set()
+    
+    while heap:
+        cost, stops, city = heapq.heappop(heap)
+        
+        if city == dst:
+            return cost
+        
+        if (city, stops) in visited or stops > k:
+            continue
+        visited.add((city, stops))
+        
+        for neighbor, price in graph[city]:
+            heapq.heappush(heap, (cost + price, stops + 1, neighbor))
+    
+    return -1
+
+# Test cases
 if __name__ == "__main__":
-    # Test Find Kth Largest
-    print("=== Find Kth Largest ===")
-    nums1 = [3, 2, 1, 5, 6, 4]
-    k1 = 2
-    result = find_kth_largest(nums1, k1)
-    print(f"Array: {nums1}, K: {k1}")
-    print(f"Kth largest: {result}")
+    # Test find_kth_largest
+    print(find_kth_largest([3,2,1,5,6,4], 2))  # 5
     
-    # Test Top K Frequent Elements
-    print("\n=== Top K Frequent Elements ===")
-    nums2 = [1, 1, 1, 2, 2, 3]
-    k2 = 2
-    result = top_k_frequent_elements(nums2, k2)
-    print(f"Array: {nums2}, K: {k2}")
-    print(f"Top K frequent: {result}")
+    # Test top_k_frequent_elements
+    print(top_k_frequent_elements([1,1,1,2,2,3], 2))  # [1, 2]
     
-    # Test K Closest Points
-    print("\n=== K Closest Points to Origin ===")
-    points = [[1, 3], [-2, 2], [2, -2]]
-    k3 = 2
-    result = k_closest_points_to_origin(points, k3)
-    print(f"Points: {points}, K: {k3}")
-    print(f"K closest: {result}")
-    
-    # Test Last Stone Weight
-    print("\n=== Last Stone Weight ===")
-    stones = [2, 7, 4, 1, 8, 1]
-    result = last_stone_weight(stones)
-    print(f"Stones: {stones}")
-    print(f"Last stone weight: {result}")
-    
-    # Test Median Finder
-    print("\n=== Median Finder ===")
-    median_finder = MedianFinder()
-    test_nums = [1, 2, 3, 4, 5]
-    for num in test_nums:
-        median_finder.addNum(num)
-        print(f"Added {num}, Median: {median_finder.findMedian()}")
-    
-    # Test Reorganize String
-    print("\n=== Reorganize String ===")
-    test_strings = ["aab", "aaab", "aaabc"]
-    for s in test_strings:
-        result = reorganize_string(s)
-        print(f"'{s}' -> '{result}'")
-    
-    # Test Minimum Cost to Connect Sticks
-    print("\n=== Minimum Cost to Connect Sticks ===")
-    sticks = [2, 4, 3]
-    result = minimum_cost_to_connect_sticks(sticks)
-    print(f"Sticks: {sticks}")
-    print(f"Minimum cost: {result}")
-    
-    # Test Kth Smallest in Sorted Matrix
-    print("\n=== Kth Smallest in Sorted Matrix ===")
-    matrix = [
-        [1, 5, 9],
-        [10, 11, 13],
-        [12, 13, 15]
-    ]
-    k4 = 8
-    result = kth_smallest_element_in_sorted_matrix(matrix, k4)
-    print(f"Matrix: {matrix}")
-    print(f"K: {k4}, Kth smallest: {result}") 
+    # Test find_median_from_data_stream
+    median_finder = find_median_from_data_stream()
+    median_finder.addNum(1)
+    median_finder.addNum(2)
+    print(median_finder.findMedian())  # 1.5 

@@ -1,6 +1,6 @@
-# NeetCode 75 - Python Solutions
+# LeetCode 75 + Top Interview 150 + Top 100 Liked - Python Solutions
 
-**Complete collection of NeetCode 75 problems with concise, interview-ready Python solutions.**
+**Complete collection of LeetCode 75, Top Interview 150, and Top 100 Liked problems with concise, interview-ready Python solutions.**
 
 ## 🎯 **Interview-Focused Design**
 
@@ -13,18 +13,24 @@
 
 | Category | Problems | File |
 |----------|----------|------|
-| Arrays & Hashing | 8 | `arrays_two_pointers.py` |
-| Two Pointers | 3 | `arrays_two_pointers.py` |
-| Sliding Window | 6 | `sliding_window.py` |
-| Stack | 7 | `stack_problems.py` |
-| Binary Search | 7 | `binary_search.py` |
+| Arrays & Hashing | 35 | `arrays_two_pointers.py` |
+| Two Pointers | 15 | `arrays_two_pointers.py` |
+| Sliding Window | 25 | `sliding_window.py` |
+| Stack | 30 | `stack_problems.py` |
+| Binary Search | 20 | `binary_search.py` |
 | Linked List | 11 | `linked_list_basics.py` |
-| Trees & BST | 15 | `trees_bst.py` |
-| Tries | 3 | `tries.py` |
+| Trees & BST | 25 | `trees_bst.py` |
+| Tries | 6 | `tries.py` |
 | Graphs | 11 | `graphs_dfs_bfs.py` |
 | Advanced Graphs | 6 | `advanced_graphs.py` |
+| Dynamic Programming | 20 | `dynamic_programming_basics.py` |
+| Heap & Priority Queue | 15 | `heap_priority_queue.py` |
+| DFS & Backtracking | 8 | `dfs_backtracking.py` |
+| BFS & Queue | 6 | `bfs_queue.py` |
+| Union Find | 8 | `graph_union_find.py` |
+| Monotonic Stack | 8 | `stack_monotonic.py` |
 
-**Total: 75/75 problems (100% complete)**
+**Total: 250+ problems (LeetCode 75 + Top Interview 150 + Top 100 Liked + additional essential problems)**
 
 ## 🚀 **Quick Start**
 
@@ -33,23 +39,35 @@
 python arrays_two_pointers.py
 python sliding_window.py
 python stack_problems.py
+python binary_search.py
+python trees_bst.py
+python dynamic_programming_basics.py
+python heap_priority_queue.py
 # ... etc
 ```
 
 ## 📁 **File Structure**
 
 ### **Core Patterns**
-- `arrays_two_pointers.py` - Arrays, Hashing, Two Pointers (19 problems)
-- `sliding_window.py` - Sliding Window Technique (6 problems)
-- `stack_problems.py` - Stack & Monotonic Stack (7 problems)
-- `binary_search.py` - Binary Search Variations (7 problems)
+- `arrays_two_pointers.py` - Arrays, Hashing, Two Pointers (50 problems)
+- `sliding_window.py` - Sliding Window Technique (25 problems)
+- `stack_problems.py` - Stack & Monotonic Stack (30 problems)
+- `binary_search.py` - Binary Search Variations (20 problems)
 - `linked_list_basics.py` - Linked List Operations (11 problems)
 
 ### **Data Structures**
-- `trees_bst.py` - Trees, BST, Traversals (15 problems)
-- `tries.py` - Trie/Prefix Tree (3 problems)
+- `trees_bst.py` - Trees, BST, Traversals (25 problems)
+- `tries.py` - Trie/Prefix Tree (6 problems)
 - `graphs_dfs_bfs.py` - Graph Algorithms (11 problems)
 - `advanced_graphs.py` - Advanced Graph Problems (6 problems)
+
+### **Advanced Algorithms**
+- `dynamic_programming_basics.py` - DP Patterns (20 problems)
+- `heap_priority_queue.py` - Heap & Priority Queue (15 problems)
+- `dfs_backtracking.py` - DFS & Backtracking (8 problems)
+- `bfs_queue.py` - BFS & Queue (6 problems)
+- `graph_union_find.py` - Union Find (8 problems)
+- `stack_monotonic.py` - Monotonic Stack (8 problems)
 
 ## 🎯 **Key Features**
 
@@ -72,6 +90,8 @@ def two_sum(nums, target):
 - **Binary Search**: Standard, rotated arrays, answer space
 - **DFS/BFS**: Graph traversal with visited tracking
 - **Dynamic Programming**: Memoization and tabulation patterns
+- **Heap**: Priority queue for top-k and median problems
+- **Union Find**: Connected components and cycle detection
 
 ### **Interview Ready**
 - Clean, readable variable names
@@ -81,20 +101,29 @@ def two_sum(nums, target):
 
 ## 📚 **Study Strategy**
 
-### **Beginner (0-25 problems)**
+### **Beginner (0-75 problems)**
 1. Start with `arrays_two_pointers.py` - Foundation patterns
 2. Practice `sliding_window.py` - Common interview technique
 3. Learn `stack_problems.py` - LIFO operations
+4. Master `binary_search.py` - Efficient search patterns
 
-### **Intermediate (26-50 problems)**
-1. Master `binary_search.py` - Efficient search patterns
-2. Practice `linked_list_basics.py` - Pointer manipulation
-3. Study `trees_bst.py` - Tree traversal and properties
+### **Intermediate (76-150 problems)**
+1. Practice `linked_list_basics.py` - Pointer manipulation
+2. Study `trees_bst.py` - Tree traversal and properties
+3. Learn `dynamic_programming_basics.py` - DP patterns
+4. Master `heap_priority_queue.py` - Advanced data structures
 
-### **Advanced (51-75 problems)**
+### **Advanced (151-225 problems)**
 1. Conquer `graphs_dfs_bfs.py` - Graph algorithms
 2. Master `advanced_graphs.py` - Complex graph problems
-3. Review all patterns for system design interviews
+3. Practice `dfs_backtracking.py` - Recursive patterns
+4. Review all patterns for system design interviews
+
+### **Expert (226+ problems)**
+1. Master `union_find.py` - Connected components
+2. Practice `monotonic_stack.py` - Advanced stack patterns
+3. Review all patterns for senior-level interviews
+4. Focus on optimization and edge cases
 
 ## 🔧 **Common Patterns Reference**
 
@@ -117,6 +146,7 @@ def two_sum(nums, target):
 - **Queue/Deque**: BFS, sliding window
 - **Heap**: Priority queue, top-k elements
 - **Trie**: String operations, prefix matching
+- **Union Find**: Connected components
 
 ## 🎯 **Interview Tips**
 
